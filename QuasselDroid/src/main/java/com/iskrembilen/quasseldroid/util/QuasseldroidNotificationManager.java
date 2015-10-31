@@ -115,6 +115,8 @@ public class QuasseldroidNotificationManager {
 
             builder.setColor(context.getResources().getColor(R.color.primary));
 
+            builder.setPublicVersion(builder.build()); // nothing to hide
+
             // Send the notification.
             notifyManager.notify(R.id.NOTIFICATION, builder.build());
         }
@@ -138,6 +140,9 @@ public class QuasseldroidNotificationManager {
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, launch, 0);
         builder.setContentIntent(contentIntent);
         builder.setColor(context.getResources().getColor(R.color.primary));
+
+        builder.setPublicVersion(builder.build()); // nothing to hide
+
         return builder.build();
 
     }
@@ -191,12 +196,18 @@ public class QuasseldroidNotificationManager {
 
             // Building the base notification
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+            NotificationCompat.Builder publicbuilder = new NotificationCompat.Builder(context);
+
             builder.setSmallIcon(R.drawable.stat_highlight)
                     .setOngoing(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setWhen(System.currentTimeMillis())
                     .setNumber(highlightedMessageCount);
-
+            publicbuilder.setSmallIcon(R.drawable.stat_highlight)
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setWhen(System.currentTimeMillis())
+                    .setNumber(highlightedMessageCount);
             if (lastMessage != null) {
                 builder.setTicker(String.format("%s : %s",
                         lastMessage.getNick(),
@@ -319,8 +330,14 @@ public class QuasseldroidNotificationManager {
                 openBuffer = -1;
                 openDrawer = true;
             }
-
+            publicbuilder.setContentTitle(context.getText(R.string.app_name))
+                        .setContentText(
+                                String.format(
+                                        res.getString(R.string.notification_hightlights_on_buffers),
+                                        res.getQuantityString(R.plurals.notification_x_highlights, highlightedMessageCount, highlightedMessageCount),
+                                        res.getQuantityString(R.plurals.notification_on_x_buffers, highlightedBuffers.size(), highlightedBuffers.size())));
             builder.setColor(ThemeUtil.Color.chatHighlight);
+            publicbuilder.setColor(ThemeUtil.Color.chatHighlight);
 
             Intent launch = new Intent(context, MainActivity.class);
             launch.putExtra("extraBufferId", openBuffer);
@@ -357,7 +374,12 @@ public class QuasseldroidNotificationManager {
             if (preferences.getBoolean(context.getString(R.string.preference_notification_vibrate), false))
                 defaults |= Notification.DEFAULT_VIBRATE;
 
-            if (defaults != 0) builder.setDefaults(defaults);
+            if (defaults != 0) {
+                builder.setDefaults(defaults);
+                publicbuilder.setDefaults(defaults);
+            }
+
+            builder.setPublicVersion(publicbuilder.build());
 
             // Send the notification.
             notifyManager.notify(R.id.NOTIFICATION, builder.build());
