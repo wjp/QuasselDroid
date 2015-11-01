@@ -199,12 +199,14 @@ public class QuasseldroidNotificationManager {
             NotificationCompat.Builder publicbuilder = new NotificationCompat.Builder(context);
 
             builder.setSmallIcon(R.drawable.stat_highlight)
-                    .setOngoing(true)
+                    .setOngoing(false)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setWhen(System.currentTimeMillis())
                     .setNumber(highlightedMessageCount);
             publicbuilder.setSmallIcon(R.drawable.stat_highlight)
-                    .setOngoing(true)
+                    .setOngoing(false)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setWhen(System.currentTimeMillis())
                     .setNumber(highlightedMessageCount);
@@ -382,7 +384,7 @@ public class QuasseldroidNotificationManager {
             builder.setPublicVersion(publicbuilder.build());
 
             // Send the notification.
-            notifyManager.notify(R.id.NOTIFICATION, builder.build());
+            notifyManager.notify(R.id.NOTIFICATION_HIGHLIGHT, builder.build());
 
             lastMessage = null;
 
