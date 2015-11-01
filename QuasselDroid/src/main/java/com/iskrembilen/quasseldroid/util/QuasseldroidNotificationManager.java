@@ -79,7 +79,7 @@ public class QuasseldroidNotificationManager {
         connected = true;
         if (pendingHighlightNotification) {
             notifyHighlights();
-        } else {
+        } /*else*/ {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.stat_normal)
                     .setContentTitle(context.getText(R.string.app_name))
