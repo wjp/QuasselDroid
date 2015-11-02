@@ -77,7 +77,7 @@ public class QuasseldroidNotificationManager {
     private void notifyConnected(boolean withPhysicalNotifications) {
         int defaults = 0;
         connected = true;
-        if (pendingHighlightNotification) {
+        if (checkPending()) {
             notifyHighlights();
         } /*else*/ {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -120,6 +120,13 @@ public class QuasseldroidNotificationManager {
             // Send the notification.
             notifyManager.notify(R.id.NOTIFICATION, builder.build());
         }
+    }
+
+    private boolean checkPending() {
+        if (pendingHighlightNotification && getHighlightedMessageCount()==0)
+            pendingHighlightNotification = false;
+
+        return pendingHighlightNotification;
     }
 
     public void notifyConnected() {
@@ -167,10 +174,10 @@ public class QuasseldroidNotificationManager {
 
         lastMessage = message;
 
+        pendingHighlightNotification = true;
+
         if (connected)
             notifyHighlights();
-        else
-            pendingHighlightNotification = true;
     }
 
     int getHighlightedMessageCount() {
@@ -357,28 +364,30 @@ public class QuasseldroidNotificationManager {
             PendingIntent contentIntent = PendingIntent.getActivity(context, highlightedMessages.hashCode(), launch, 0);
             builder.setContentIntent(contentIntent);
 
-            if (preferences.getBoolean(context.getString(R.string.preference_notification_sound_active), false) &&
-                    !preferences.getBoolean(context.getString(R.string.has_focus), true) &&
-                    preferences.getBoolean(context.getString(R.string.preference_notification_sound), false)) {
+            if (pendingHighlightNotification) {
+                if (preferences.getBoolean(context.getString(R.string.preference_notification_sound_active), false) &&
+                        !preferences.getBoolean(context.getString(R.string.has_focus), true) &&
+                        preferences.getBoolean(context.getString(R.string.preference_notification_sound), false)) {
 
-                Uri ringtone = Uri.parse(preferences.getString(context.getString(R.string.preference_notification_sound_file), ""));
-                if (ringtone.equals(Uri.EMPTY)) defaults |= Notification.DEFAULT_SOUND;
-                else builder.setSound(ringtone);
-            } else if (!preferences.getBoolean(context.getString(R.string.preference_notification_sound_active), true) &&
-                    preferences.getBoolean(context.getString(R.string.preference_notification_sound), false)) {
+                    Uri ringtone = Uri.parse(preferences.getString(context.getString(R.string.preference_notification_sound_file), ""));
+                    if (ringtone.equals(Uri.EMPTY)) defaults |= Notification.DEFAULT_SOUND;
+                    else builder.setSound(ringtone);
+                } else if (!preferences.getBoolean(context.getString(R.string.preference_notification_sound_active), true) &&
+                        preferences.getBoolean(context.getString(R.string.preference_notification_sound), false)) {
 
-                Uri ringtone = Uri.parse(preferences.getString(context.getString(R.string.preference_notification_sound_file), ""));
-                if (ringtone.equals(Uri.EMPTY)) defaults |= Notification.DEFAULT_SOUND;
-                else builder.setSound(ringtone);
-            }
-            if (preferences.getBoolean(context.getString(R.string.preference_notification_light), false))
-                defaults |= Notification.DEFAULT_LIGHTS;
-            if (preferences.getBoolean(context.getString(R.string.preference_notification_vibrate), false))
-                defaults |= Notification.DEFAULT_VIBRATE;
+                    Uri ringtone = Uri.parse(preferences.getString(context.getString(R.string.preference_notification_sound_file), ""));
+                    if (ringtone.equals(Uri.EMPTY)) defaults |= Notification.DEFAULT_SOUND;
+                    else builder.setSound(ringtone);
+                }
+                if (preferences.getBoolean(context.getString(R.string.preference_notification_light), false))
+                    defaults |= Notification.DEFAULT_LIGHTS;
+                if (preferences.getBoolean(context.getString(R.string.preference_notification_vibrate), false))
+                    defaults |= Notification.DEFAULT_VIBRATE;
 
-            if (defaults != 0) {
-                builder.setDefaults(defaults);
-                publicbuilder.setDefaults(defaults);
+                if (defaults != 0) {
+                    builder.setDefaults(defaults);
+                    publicbuilder.setDefaults(defaults);
+                }
             }
 
             builder.setPublicVersion(publicbuilder.build());
