@@ -353,6 +353,8 @@ public class ChatFragment extends Fragment implements Serializable {
                 Log.d(TAG, String.format("Marking highlights for buffer %d read", buffer.getInfo().id));
                 BusProvider.getInstance().post(new ManageChannelEvent(buffer.getInfo().id, ChannelAction.HIGHLIGHTS_READ));
 
+                adapter.notifyDataSetInvalidated();
+
                 //Move list to correct position
                 if (adapter.buffer.getTopMessageShown() == 0) {
                     backlogList.setSelection(adapter.getCount() - 1);
