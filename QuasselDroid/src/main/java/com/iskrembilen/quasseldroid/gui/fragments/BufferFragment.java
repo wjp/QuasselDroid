@@ -157,6 +157,8 @@ public class BufferFragment extends Fragment implements Serializable {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.context_buffer_network, menu);
 
+                actionModeData.actionMode = mode;
+
                 bufferList.setItemChecked(actionModeData.index, true);
 
                 return true;

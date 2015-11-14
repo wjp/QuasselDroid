@@ -9,6 +9,7 @@ import android.util.Log;
 import com.iskrembilen.quasseldroid.events.ConnectionChangedEvent;
 import com.iskrembilen.quasseldroid.events.ConnectionChangedEvent.Status;
 import com.iskrembilen.quasseldroid.util.BusProvider;
+import com.iskrembilen.quasseldroid.util.QuasseldroidNotificationManager;
 import com.iskrembilen.quasseldroid.util.ThemeUtil;
 import com.squareup.otto.Subscribe;
 

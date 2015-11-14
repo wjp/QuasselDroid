@@ -68,6 +68,7 @@ import com.iskrembilen.quasseldroid.events.DisconnectCoreEvent;
 import com.iskrembilen.quasseldroid.events.InitProgressEvent;
 import com.iskrembilen.quasseldroid.events.JoinChannelEvent;
 import com.iskrembilen.quasseldroid.events.LatencyChangedEvent;
+import com.iskrembilen.quasseldroid.events.ManageChannelEvent;
 import com.iskrembilen.quasseldroid.events.UpdateReadBufferEvent;
 import com.iskrembilen.quasseldroid.gui.dialogs.TopicViewDialog;
 import com.iskrembilen.quasseldroid.gui.fragments.BufferFragment;
@@ -78,6 +79,7 @@ import com.iskrembilen.quasseldroid.gui.fragments.NickListFragment;
 import com.iskrembilen.quasseldroid.service.InFocus;
 import com.iskrembilen.quasseldroid.util.BusProvider;
 import com.iskrembilen.quasseldroid.util.Helper;
+import com.iskrembilen.quasseldroid.util.QuasseldroidNotificationManager;
 import com.iskrembilen.quasseldroid.util.ThemeUtil;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -195,8 +197,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent!=null) {
-            Log.d(TAG, "Intent: " + intent.getIntExtra("extraBufferId", -1) + " " + intent.getDataString());
-
             int requestOpenBuffer = intent.getIntExtra("extraBufferId", -1);
             boolean requestOpenDrawer = intent.getBooleanExtra("extraDrawer", false);
             if (requestOpenBuffer != -1) {

@@ -338,7 +338,10 @@ public class CoreConnService extends Service {
         stopForeground(true);
         initDone = false;
         isConnecting = false;
-        notificationManager = null;
+        if (notificationManager != null) {
+            notificationManager.clear();
+            notificationManager = null;
+        }
         if(incomingHandler != null) {
             incomingHandler.disabled = true;
             incomingHandler.removeCallbacksAndMessages(null);
@@ -668,10 +671,12 @@ public class CoreConnService extends Service {
                     user = networks.getNetworkById(msg.arg1).getUserByNick(bundle.getString("nick"));
                     String modes = (String) bundle.get("mode");
                     bufferName = (String) bundle.get("buffername");
-                    for (Buffer buf : networks.getNetworkById(msg.arg1).getBuffers().getBufferList(true)) {
-                        if (buf.getInfo().name.equalsIgnoreCase(bufferName)) {
-                            buf.getUsers().addUser(user, modes);
-                            return;
+                    if (user != null) {
+                        for (Buffer buf : networks.getNetworkById(msg.arg1).getBuffers().getBufferList(true)) {
+                            if (buf.getInfo().name.equalsIgnoreCase(bufferName)) {
+                                buf.getUsers().addUser(user, modes);
+                                return;
+                            }
                         }
                     }
                     //Did not find buffer in the network, something is wrong
@@ -934,6 +939,10 @@ public class CoreConnService extends Service {
 
     @Subscribe
     public void doManageChannel(ManageChannelEvent event) {
+        if (coreConn==null) {
+            reconnect("");
+        }
+
         if (event.action == ChannelAction.DELETE) {
             BusProvider.getInstance().post(new BufferRemovedEvent(event.bufferId));
             coreConn.requestRemoveBuffer(event.bufferId);

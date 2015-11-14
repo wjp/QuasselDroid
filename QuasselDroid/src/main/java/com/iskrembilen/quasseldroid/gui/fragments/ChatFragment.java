@@ -350,6 +350,7 @@ public class ChatFragment extends Fragment implements Serializable {
                 autoCompleteButton.setEnabled(true);
                 inputField.setEnabled(true);
                 buffer.setDisplayed(true);
+                Log.d(TAG, String.format("Marking highlights for buffer %d read", buffer.getInfo().id));
                 BusProvider.getInstance().post(new ManageChannelEvent(buffer.getInfo().id, ChannelAction.HIGHLIGHTS_READ));
 
                 //Move list to correct position
