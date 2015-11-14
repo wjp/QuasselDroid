@@ -70,6 +70,7 @@ public class QuasseldroidNotificationManager {
                 buffers.removeElement(bufferId);
                 if (highlightedBuffers.size() == 0) {
                     notifyConnected(false);
+                    notifyManager.cancel(R.id.NOTIFICATION_HIGHLIGHT);
                 } else if (!connected) {
                     notifyConnected(false);
                     pendingHighlightNotification = true;
@@ -85,7 +86,11 @@ public class QuasseldroidNotificationManager {
         connected = true;
         if (checkPending()) {
             notifyHighlights();
-        } /*else*/ {
+        } else {
+            notifyManager.cancel(R.id.NOTIFICATION_HIGHLIGHT);
+        }
+
+        {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.stat_normal)
                     .setContentTitle(context.getText(R.string.app_name))
@@ -404,8 +409,12 @@ public class QuasseldroidNotificationManager {
 
     @Subscribe
     public void onInitProgressed(InitProgressEvent event) {
-        if (event.done && getHighlightedMessageCount()>0) {
-            notifyHighlights();
+        if (event.done) {
+            if (getHighlightedMessageCount()>0) {
+                notifyHighlights();
+            } else {
+                notifyManager.cancel(R.id.NOTIFICATION_HIGHLIGHT);
+            }
         }
     }
 
