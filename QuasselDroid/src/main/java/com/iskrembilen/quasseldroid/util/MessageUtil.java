@@ -150,6 +150,11 @@ public class MessageUtil {
             if (message.type == IrcMessage.Type.Server && message.getSender().length() == 0)
                 return;
 
+            // HACK: Don't send notifications on messages sent by self outside of Quassel
+            Network net = Client.getInstance().getNetworks().getNetworkById(message.bufferInfo.networkId);
+            if (net != null && message.getNick() != null && message.getNick().equalsIgnoreCase(net.getMyNick()))
+                return;
+
             Buffer buffer = Client.getInstance().getNetworks().getBufferById(message.bufferInfo.id);
 
             // We want to ignore the currently focused buffer
