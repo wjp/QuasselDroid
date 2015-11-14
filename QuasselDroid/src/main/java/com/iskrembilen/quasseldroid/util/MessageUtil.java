@@ -53,6 +53,7 @@ public class MessageUtil {
                         !(message.type == IrcMessage.Type.Server && message.getSender().length() == 0)
                 )
             ) && (!buffer.isDisplayed() && buffer.getLastSeenMessage() < message.messageId && !buffer.isPermanentlyHidden())
+            && !message.getNick().equalsIgnoreCase(nick) // HACK: Don't send notifications on messages sent by self outside of Quassel
             ) {
             notificationManager.addMessage(message);
 
