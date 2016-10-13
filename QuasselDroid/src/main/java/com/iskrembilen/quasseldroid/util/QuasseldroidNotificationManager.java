@@ -411,6 +411,8 @@ public class QuasseldroidNotificationManager {
 
             builder.setOngoing(false);
             publicbuilder.setOngoing(false);
+            builder.setAutoCancel(false);
+            publicbuilder.setAutoCancel(false);
 
             Intent launch = new Intent(context, MainActivity.class);
             if (!buffers.isEmpty()) launch.putExtra("extraBufferId", buffers.get(0));
