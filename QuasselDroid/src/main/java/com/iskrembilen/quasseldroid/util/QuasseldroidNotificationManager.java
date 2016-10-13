@@ -106,6 +106,7 @@ public class QuasseldroidNotificationManager {
                 buffers.remove((Integer) bufferId);
                 if (highlightedBuffers.size() == 0) {
                     notifyConnected(false);
+                    notifyManager.cancel(R.id.NOTIFICATION_HIGHLIGHT);
                 } else if (!connected) {
                     notifyConnected(false);
                     pendingHighlightNotification = true;
@@ -122,6 +123,10 @@ public class QuasseldroidNotificationManager {
         if (checkPending()) {
             notifyHighlights();
         } else {
+            notifyManager.cancel(R.id.NOTIFICATION_HIGHLIGHT);
+        }
+
+        {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.stat_normal)
                     .setContentTitle(context.getText(R.string.app_name))
@@ -404,6 +409,9 @@ public class QuasseldroidNotificationManager {
                 publicbuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
             }
 
+            builder.setOngoing(false);
+            publicbuilder.setOngoing(false);
+
             Intent launch = new Intent(context, MainActivity.class);
             if (!buffers.isEmpty()) launch.putExtra("extraBufferId", buffers.get(0));
             launch.putExtra("extraDrawer", false);
@@ -453,7 +461,7 @@ public class QuasseldroidNotificationManager {
             //builder.setColor(Color.parseColor(preferences.getString(context.getString(R.string.preference_notification_light_color), context.getString(R.string.notification_light_color_default))));
 
             // Send the notification.
-            notifyManager.notify(R.id.NOTIFICATION, builder.build());
+            notifyManager.notify(R.id.NOTIFICATION_HIGHLIGHT, builder.build());
 
             pendingHighlightNotification = false;
         }
@@ -477,7 +485,10 @@ public class QuasseldroidNotificationManager {
     public void onInitProgressed(InitProgressEvent event) {
         if (event.done) {
             initDone = true;
-            if(getHighlightedMessageCount()>0) notifyHighlights();
+            if(getHighlightedMessageCount()>0)
+                notifyHighlights();
+            else
+                notifyManager.cancel(R.id.NOTIFICATION_HIGHLIGHT);
         } else if (!Objects.equals(event.progress, this.init_progress)){
             notifyConnecting(Optional.of(event.progress));
             this.init_progress = event.progress;
