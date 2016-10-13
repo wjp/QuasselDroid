@@ -158,6 +158,9 @@ public class QuasseldroidNotificationManager {
 
             builder.setColor(context.getResources().getColor(R.color.primary));
 
+            builder.setPublicVersion(builder.build()); // nothing to hide, except for the disconnect button
+
+
             Intent disconnect = new Intent(context, CoreConnService.class);
             disconnect.putExtra("disconnect",true);
 
@@ -199,6 +202,9 @@ public class QuasseldroidNotificationManager {
         contentIntent = PendingIntent.getActivity(context, 0, launch, 0);
         builder.setContentIntent(contentIntent);
         builder.setColor(context.getResources().getColor(R.color.primary));
+
+        builder.setPublicVersion(builder.build()); // nothing to hide
+
         return builder.build();
 
     }
@@ -260,7 +266,13 @@ public class QuasseldroidNotificationManager {
 
             // Building the base notification
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+            NotificationCompat.Builder publicbuilder = new NotificationCompat.Builder(context);
+
             builder.setSmallIcon(R.drawable.stat_highlight)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setWhen(System.currentTimeMillis())
+                    .setNumber(highlightedMessageCount);
+            publicbuilder.setSmallIcon(R.drawable.stat_highlight)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setWhen(System.currentTimeMillis())
                     .setNumber(highlightedMessageCount);
@@ -374,11 +386,22 @@ public class QuasseldroidNotificationManager {
                 builder.setStyle(inboxStyle);
             }
 
+            publicbuilder.setContentTitle(context.getText(R.string.app_name))
+                        .setContentText(
+                                String.format(
+                                        res.getString(R.string.notification_hightlights_on_buffers),
+                                        res.getQuantityString(R.plurals.notification_x_highlights, highlightedMessageCount, highlightedMessageCount),
+                                        res.getQuantityString(R.plurals.notification_on_x_buffers, highlightedBuffers.size(), highlightedBuffers.size())));
+
             builder.setColor(ThemeUtil.Color.chatHighlight);
+            publicbuilder.setColor(ThemeUtil.Color.chatHighlight);
+
             if (hasDirectMessage()) {
                 builder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
+                publicbuilder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
             } else {
                 builder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
+                publicbuilder.setCategory(NotificationCompat.CATEGORY_SOCIAL);
             }
 
             Intent launch = new Intent(context, MainActivity.class);
@@ -395,6 +418,7 @@ public class QuasseldroidNotificationManager {
             if (contentIntent != null) contentIntent.cancel();
             contentIntent = PendingIntent.getActivity(context, highlightedMessages.hashCode(), launch, 0);
             builder.setContentIntent(contentIntent);
+            publicbuilder.setContentIntent(contentIntent);
 
 
 
@@ -418,8 +442,13 @@ public class QuasseldroidNotificationManager {
                 if (preferences.getBoolean(context.getString(R.string.preference_notification_vibrate), false))
                     defaults |= Notification.DEFAULT_VIBRATE;
 
-                if (defaults != 0) builder.setDefaults(defaults);
+                if (defaults != 0) {
+                    builder.setDefaults(defaults);
+                    publicbuilder.setDefaults(defaults);
+                }
             }
+
+            builder.setPublicVersion(publicbuilder.build());
 
             //builder.setColor(Color.parseColor(preferences.getString(context.getString(R.string.preference_notification_light_color), context.getString(R.string.notification_light_color_default))));
 
@@ -477,6 +506,9 @@ public class QuasseldroidNotificationManager {
         builder.setContentIntent(contentIntent);
 
         builder.setColor(context.getResources().getColor(R.color.chat_line_error_dark));
+
+        builder.setPublicVersion(builder.build()); // nothing to hide
+
         //Send the notification.
         notifyManager.notify(R.id.NOTIFICATION_DISCONNECTED, builder.build());
     }
