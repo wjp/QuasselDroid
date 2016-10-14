@@ -114,6 +114,7 @@ public class QuasseldroidNotificationManager {
                     notifyConnected(false);
                     pendingHighlightNotification = true;
                 } else {
+                    notifyConnected(false);
                     notifyHighlights();
                 }
             }
