@@ -60,6 +60,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static android.app.Notification.VISIBILITY_PRIVATE;
+import static android.app.Notification.VISIBILITY_PUBLIC;
+
 public class QuasseldroidNotificationManager {
 
     //TODO: lots of duplicate code in this class, clean up
@@ -164,6 +167,7 @@ public class QuasseldroidNotificationManager {
             builder.setColor(context.getResources().getColor(R.color.primary));
 
             builder.setPublicVersion(builder.build()); // nothing to hide, except for the disconnect button
+            builder.setVisibility(VISIBILITY_PRIVATE);
 
 
             Intent disconnect = new Intent(context, CoreConnService.class);
@@ -208,7 +212,7 @@ public class QuasseldroidNotificationManager {
         builder.setContentIntent(contentIntent);
         builder.setColor(context.getResources().getColor(R.color.primary));
 
-        builder.setPublicVersion(builder.build()); // nothing to hide
+        builder.setVisibility(VISIBILITY_PUBLIC);
 
         return builder.build();
 
@@ -464,6 +468,7 @@ public class QuasseldroidNotificationManager {
             }
 
             builder.setPublicVersion(publicbuilder.build());
+            builder.setVisibility(VISIBILITY_PRIVATE);
 
             //builder.setColor(Color.parseColor(preferences.getString(context.getString(R.string.preference_notification_light_color), context.getString(R.string.notification_light_color_default))));
 
@@ -525,7 +530,7 @@ public class QuasseldroidNotificationManager {
 
         builder.setColor(context.getResources().getColor(R.color.chat_line_error_dark));
 
-        builder.setPublicVersion(builder.build()); // nothing to hide
+        builder.setVisibility(VISIBILITY_PUBLIC);
 
         //Send the notification.
         notifyManager.notify(R.id.NOTIFICATION_DISCONNECTED, builder.build());
